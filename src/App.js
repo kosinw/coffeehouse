@@ -1,7 +1,10 @@
+import Counter from "./components/Counter";
+
 function App() {
   return (
     <div className="App">
-      hackhw21
+      big chungus is smnall
+      <Counter />
     </div>
   );
 }
