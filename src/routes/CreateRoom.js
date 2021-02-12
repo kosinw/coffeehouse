@@ -16,8 +16,17 @@ const CreateRoom = (props) => {
         props.history.push(`/room/${id}`);
     }
 
+    function join() {
+        var roomid = document.getElementById('room-code').value
+        props.history.push(`/room/${roomid}`)
+    }
+
     return (
-        <button onClick={create}>Create room</button>
+        <>
+        <button onClick={create}>Create Room</button>
+        <button onClick={join}>Join Room</button>
+        <input id='room-code' class="w3-input" type="text" placeholder="ABCDEF"></input>
+        </>
     );
 };
 
