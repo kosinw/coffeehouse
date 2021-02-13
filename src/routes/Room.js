@@ -45,7 +45,9 @@ const Room = (props) => {
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
 
-    var isdeafened = false;
+    let deafened = false;
+    let songqueue = [];
+    let songplaying = false;
 
     function MuteButton() {
         const [text, setText] = useState("Mute");
@@ -93,26 +95,65 @@ const Room = (props) => {
 
     function SearchButton() {
         const [uri, setUri] = useState(null);
+
+        const songEnded = () => {
+            songplaying = false;
+
+            console.dir(songqueue.length)
+
+            if (songqueue.length > 0) {
+                songplaying = true;
+                var search = require('youtube-search');
+
+                var opts = {
+                    maxResults: 20,
+                    key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
+                };
+
+                search(songqueue[0], opts, function (err, results) {
+                    if (err) return console.log(err);
+                    let i;
+                    for (i = 0; i < results.length; i++) {
+                        if (results[i].kind == 'youtube#video') {
+                            setUri(results[i].link)
+                            console.dir(results[i].link);
+                            songqueue.shift()
+                            break;
+                        }
+                    }
+                });
+            }
+        }
+
         const setVideo = () => {
-            var search = require('youtube-search');
+
             let videoquery = document.getElementById('video-query').value
 
-            var opts = {
-                maxResults: 20,
-                key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
-            };
+            if (!songplaying) {
+                songplaying = true;
+                var search = require('youtube-search');
 
-            search(videoquery, opts, function (err, results) {
-                if (err) return console.log(err);
-                let i;
-                for (i = 0; i < results.length; i++) {
-                    if (results[i].kind == 'youtube#video') {
-                        setUri(results[i].link)
-                        console.dir(results[i].link);
-                        break;
+                var opts = {
+                    maxResults: 20,
+                    key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
+                };
+
+                search(videoquery, opts, function (err, results) {
+                    if (err) return console.log(err);
+                    let i;
+                    for (i = 0; i < results.length; i++) {
+                        if (results[i].kind == 'youtube#video') {
+                            setUri(results[i].link)
+                            console.dir(results[i].link);
+                            break;
+                        }
                     }
-                }
-            });
+                });
+            }
+            else {
+                songqueue.push(videoquery);
+                console.dir(songqueue);
+            }
         };
 
         return (
@@ -122,8 +163,9 @@ const Room = (props) => {
                 <ReactPlayer 
                     url={uri}
                     playing = 'true'
-                    height = '0px'
-                    width = '0px'
+                    height = '300px'
+                    width = '300px'
+                    onEnded = {() => songEnded()}
                 />
             </div>
         );
@@ -141,14 +183,14 @@ const Room = (props) => {
         const [text, setText] = useState("Deafen");
 
         const setAudio = () => {
-            if (!isdeafened) {
+            if (!deafened) {
                 setText("Undeafen");
-                isdeafened = true;
+                deafened = true;
                 var elems = document.querySelectorAll("video, audio");
                 [].forEach.call(elems, function (elem) { deafenMe(elem); });
             } else {
                 setText("Deafen");
-                isdeafened = false;
+                deafened = false;
                 var elems = document.querySelectorAll("video, audio");
                 [].forEach.call(elems, function (elem) { undeafenMe(elem); });
             }
