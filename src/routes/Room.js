@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
+import ReactPlayer from 'react-player';
 
 const Container = styled.div`
     padding: 20px;
@@ -90,6 +91,44 @@ const Room = (props) => {
         );
     }
 
+    function SearchButton() {
+        const [uri, setUri] = useState(null);
+        const setVideo = () => {
+            var search = require('youtube-search');
+            let videoquery = document.getElementById('video-query').value
+
+            var opts = {
+                maxResults: 20,
+                key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
+            };
+
+            search(videoquery, opts, function (err, results) {
+                if (err) return console.log(err);
+                let i;
+                for (i = 0; i < results.length; i++) {
+                    if (results[i].kind == 'youtube#video') {
+                        setUri(results[i].link)
+                        console.dir(results[i].link);
+                        break;
+                    }
+                }
+            });
+        };
+
+        return (
+            <div>
+                <button onClick={() => setVideo()}>search youtube</button>
+                <input id='video-query' class="w3-input" type="text" placeholder="big chungus"></input>
+                <ReactPlayer 
+                    url={uri}
+                    playing = 'true'
+                    height = '0px'
+                    width = '0px'
+                />
+            </div>
+        );
+    }
+
     function deafenMe(elem) {
         elem.muted = true;
     }
@@ -106,12 +145,12 @@ const Room = (props) => {
                 setText("Undeafen");
                 isdeafened = true;
                 var elems = document.querySelectorAll("video, audio");
-                [].forEach.call(elems, function(elem) { deafenMe(elem); });
+                [].forEach.call(elems, function (elem) { deafenMe(elem); });
             } else {
                 setText("Deafen");
                 isdeafened = false;
                 var elems = document.querySelectorAll("video, audio");
-                [].forEach.call(elems, function(elem) { undeafenMe(elem); });
+                [].forEach.call(elems, function (elem) { undeafenMe(elem); });
             }
         };
 
@@ -195,6 +234,7 @@ const Room = (props) => {
             <MuteButton />
             <DeafenButton />
             <VideoButton />
+            <SearchButton />
             {peers.map((peer, index) => {
                 return (
                     <Video key={index} peer={peer} />
