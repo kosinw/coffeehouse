@@ -4,16 +4,25 @@
   "private": true,
   "proxy": "http://localhost:8000",
   "dependencies": {
+    "@emotion/core": "^11.0.0",
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.1.5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "md5": "^2.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-helmet": "^6.1.0",
+    "react-icons": "^4.2.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "react-use-clipboard": "^1.0.7",
     "simple-peer": "9.6.2",
     "socket.io-client": "^3.1.0",
     "styled-components": "^5.1.0",
+    "tailwindcss": "^2.0.3",
+    "twin.macro": "^2.2.3",
     "uuid": "^7.0.3",
     "yarn": "^1.22.10"
   },
@@ -22,6 +31,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "babelMacros": {
+    "twin": {
+      "config": "./tailwind.config.js"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -37,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "postcss": "^8.2.6"
   }
 }
