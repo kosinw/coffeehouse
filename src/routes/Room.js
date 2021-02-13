@@ -19,6 +19,10 @@ const StyledVideo = styled.video`
     pointer-events: none;
 `;
 
+function Item(props) {
+    return <li>{props.message}</li>;
+}
+
 const Video = (props) => {
     const ref = useRef();
 
@@ -38,8 +42,19 @@ const videoConstraints = {
     width: window.innerWidth / 2
 };
 
+const Message = (props) => {
+    //sender: person who sent it
+    //text: message body
+    //isYou: whether you sent it
+    const msgData = props;
+    console.log(msgData);
+    return { text: msgData.sender + ": " + msgData.message };
+    //return <h1>{msgData.sender}: {msgData.text}</h1>
+}
+
 const Room = (props) => {
     const [peers, setPeers] = useState([]);
+    const [chat, setChat] = useState([{}]);
     const socketRef = useRef();
     const userVideo = useRef();
     const peersRef = useRef([]);
@@ -68,6 +83,31 @@ const Room = (props) => {
                     {text}
                 </button>
             </div>
+        );
+    }
+    function sendMessage(message) {
+        socketRef.current.emit("sending message", message);
+        setChat([...chat, Message({
+            sender: "You",
+            message: message,
+            isYou: true
+        })]);
+    }
+    function ChatType() {
+        let formData = { message: "" };
+        const handleChange = (e) => {
+            formData.message = e.target.value.trim();
+        };
+        const afterSubmission = e => {
+            e.preventDefault();
+            sendMessage(formData.message);
+            document.getElementById("chatEnter").reset();
+        }
+
+        return (
+            <form id="chatEnter" onSubmit={afterSubmission}>
+                <input type="text" onChange={handleChange} placeholder="Enter message"></input>
+            </form>
         );
     }
 
@@ -277,6 +317,15 @@ const Room = (props) => {
                 const item = peersRef.current.find(p => p.peerID === payload.id);
                 item.peer.signal(payload.signal);
             });
+
+            socketRef.current.on("receiving message", messageData => {
+                const data = JSON.parse(messageData);
+                setChat([...chat, Message({
+                    sender: data.sender,
+                    message: data.message,
+                    isYou: false
+                })]);
+            });
         })
     }, []);
 
@@ -314,6 +363,12 @@ const Room = (props) => {
         <Container>
             <StyledVideo muted ref={userVideo} autoPlay playsInline />
             <MuteButton />
+            <ChatType />
+            <div>
+                {chat.map((person, index) => (
+                    <p key={index}>{person.text}</p>
+                ))}
+            </div>
             <DeafenButton />
             <VideoButton />
             <SearchButton />
