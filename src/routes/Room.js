@@ -27,10 +27,9 @@ const Video = (props) => {
     }, []);
 
     return (
-        <StyledVideo playsInline autoPlay ref={ref} />
+        <StyledVideo muted={false} playsInline autoPlay ref={ref} />
     );
 }
-
 
 const videoConstraints = {
     height: window.innerHeight / 2,
@@ -43,11 +42,27 @@ const Room = (props) => {
     const userVideo = useRef();
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
+    const MuteButton = (props) => {
+        function setMic() {
+            if (userVideo.current.srcObject.getAudioTracks()[0].enabled)
+            {
+                this.changeText("newtext")
+                userVideo.current.srcObject.getAudioTracks()[0].enabled=false;
+            }
+        }
+
+        return (
+            <div>
+                <button onClick={setMic}>
+                    {text}
+                </button>
+            </div>
+        );
+    }
 
     useEffect(() => {
-        socketRef.current = io.connect("24.205.76.29:64198", {
-            // withCredentials: true,
-        });
+        onClick={ () => { this.changeText("newtext")}  }> {text} </Button>
+        socketRef.current = io.connect("24.205.76.29:64198");
         navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             userVideo.current.srcObject = stream;
             socketRef.current.emit("join room", roomID);
@@ -114,6 +129,7 @@ const Room = (props) => {
     return (
         <Container>
             <StyledVideo muted ref={userVideo} autoPlay playsInline />
+            <MuteButton />
             {peers.map((peer, index) => {
                 return (
                     <Video key={index} peer={peer} />
