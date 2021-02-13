@@ -43,6 +43,7 @@ const Room = (props) => {
     const userVideo = useRef();
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
+
     function MuteButton() {
         const [text, setText] = useState("Mute");
 
@@ -52,6 +53,50 @@ const Room = (props) => {
                 userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
             } else {
                 setText("Mute");
+                userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
+            }
+        };
+
+        return (
+            <div>
+                <button onClick={() => setMic()}>
+                    {text}
+                </button>
+            </div>
+        );
+    }
+
+    function VideoButton() {
+        const [text, setText] = useState("Turn off Video");
+
+        const setVideo = () => {
+            if (userVideo.current.srcObject.getVideoTracks()[0].enabled) {
+                setText("Turn on Video");
+                userVideo.current.srcObject.getVideoTracks()[0].enabled = false;
+            } else {
+                setText("Turn off Video");
+                userVideo.current.srcObject.getVideoTracks()[0].enabled = true;
+            }
+        };
+
+        return (
+            <div>
+                <button onClick={() => setVideo()}>
+                    {text}
+                </button>
+            </div>
+        );
+    }
+
+    function DeafenButton() {
+        const [text, setText] = useState("Deafen");
+
+        const setMic = () => {
+            if (userVideo.current.srcObject.getAudioTracks()[0].enabled) {
+                setText("Undeafen");
+                userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
+            } else {
+                setText("Deafen");
                 userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
             }
         };
@@ -134,6 +179,8 @@ const Room = (props) => {
         <Container>
             <StyledVideo muted ref={userVideo} autoPlay playsInline />
             <MuteButton />
+            <DeafenButton />
+            <VideoButton />
             {peers.map((peer, index) => {
                 return (
                     <Video key={index} peer={peer} />
