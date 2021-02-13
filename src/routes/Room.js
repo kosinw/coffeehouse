@@ -3,6 +3,7 @@ import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
 import ReactPlayer from 'react-player';
+import * as Tone from 'tone'
 
 const Container = styled.div`
     padding: 20px;
@@ -129,6 +130,219 @@ const Room = (props) => {
                 <button onClick={() => setVideo()}>
                     {text}
                 </button>
+            </div>
+        );
+    }
+
+    function DrumBoard() {
+        //play a middle 'C' for the duration of an 8th note
+        const playDrum = (url) => {
+            const player = new Tone.Player(url).toDestination();
+            Tone.loaded().then(() => {
+	            player.start();
+            });
+        };
+
+        return (
+            <div>
+                <br></br>
+                <br></br>
+                <p>Drums:</p>
+
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/chinese-cymbal.mp3")}>13</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/bass-drum-1.mp3")}>14</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/acoustic-snare.mp3")}>15</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/low-mid-tom.mp3")}>16</button>
+                <br></br>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/high-floor-tom.mp3")}>9</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/hi-mid-tom.mp3")}>10</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/electric-snare.mp3")}>11</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/closed-hihat.mp3")}>12</button>
+                <br></br>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/open-hihat.mp3")}>5</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/low-tom.mp3")}>6</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/low-floor-tom.mp3")}>7</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/high-tom.mp3")}>8</button>
+                <br></br>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/splash-cymbal.mp3")}>1</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/ride-cymbal-1.mp3")}>2</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/ride-bell.mp3")}>3</button>
+                <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/pedal-hihat.mp3")}>4</button>
+            </div>
+        );
+    }
+
+    function SynthBoard() {
+        //create a synth and connect it to the main output (your speakers)
+        const defaultSynth = new Tone.Synth().toDestination();
+        const fmSynth = new Tone.FMSynth().toDestination();
+        const amSynth = new Tone.AMSynth().toDestination();
+        const monoSynth = new Tone.MonoSynth().toDestination();
+        const duoSynth = new Tone.DuoSynth().toDestination();
+        const metalSynth = new Tone.MetalSynth().toDestination();
+        const pluckSynth = new Tone.PluckSynth().toDestination();
+
+        //play a middle 'C' for the duration of an 8th note
+        const playNote = (note, synth) => {
+            synth.triggerAttackRelease(note, "16n");
+
+            const player = new Tone.Player("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/acoustic-snare.mp3").toDestination();
+            Tone.loaded().then(() => {
+	            player.start();
+            });
+        };
+
+        return (
+            <div>
+                <br></br>
+                <br></br>
+                <p>Default:</p>
+                <button onClick={() => playNote("D5", defaultSynth)}>D5</button>
+                <button onClick={() => playNote("E5", defaultSynth)}>E5</button>
+                <button onClick={() => playNote("F5", defaultSynth)}>F5</button>
+                <button onClick={() => playNote("G5", defaultSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", defaultSynth)}>G4</button>
+                <button onClick={() => playNote("A4", defaultSynth)}>A4</button>
+                <button onClick={() => playNote("B4", defaultSynth)}>B4</button>
+                <button onClick={() => playNote("C5", defaultSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", defaultSynth)}>C4</button>
+                <button onClick={() => playNote("D4", defaultSynth)}>D4</button>
+                <button onClick={() => playNote("E4", defaultSynth)}>E4</button>
+                <button onClick={() => playNote("F4", defaultSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", defaultSynth)}>F3</button>
+                <button onClick={() => playNote("G3", defaultSynth)}>G3</button>
+                <button onClick={() => playNote("A3", defaultSynth)}>A3</button>
+                <button onClick={() => playNote("B3", defaultSynth)}>B3</button>
+                <br></br>
+                <p>FM:</p>
+                <button onClick={() => playNote("D5", fmSynth)}>D5</button>
+                <button onClick={() => playNote("E5", fmSynth)}>E5</button>
+                <button onClick={() => playNote("F5", fmSynth)}>F5</button>
+                <button onClick={() => playNote("G5", fmSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", fmSynth)}>G4</button>
+                <button onClick={() => playNote("A4", fmSynth)}>A4</button>
+                <button onClick={() => playNote("B4", fmSynth)}>B4</button>
+                <button onClick={() => playNote("C5", fmSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", fmSynth)}>C4</button>
+                <button onClick={() => playNote("D4", fmSynth)}>D4</button>
+                <button onClick={() => playNote("E4", fmSynth)}>E4</button>
+                <button onClick={() => playNote("F4", fmSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", fmSynth)}>F3</button>
+                <button onClick={() => playNote("G3", fmSynth)}>G3</button>
+                <button onClick={() => playNote("A3", fmSynth)}>A3</button>
+                <button onClick={() => playNote("B3", fmSynth)}>B3</button>
+                <br></br>
+                <p>AM:</p>
+                <button onClick={() => playNote("D5", amSynth)}>D5</button>
+                <button onClick={() => playNote("E5", amSynth)}>E5</button>
+                <button onClick={() => playNote("F5", amSynth)}>F5</button>
+                <button onClick={() => playNote("G5", amSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", amSynth)}>G4</button>
+                <button onClick={() => playNote("A4", amSynth)}>A4</button>
+                <button onClick={() => playNote("B4", amSynth)}>B4</button>
+                <button onClick={() => playNote("C5", amSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", amSynth)}>C4</button>
+                <button onClick={() => playNote("D4", amSynth)}>D4</button>
+                <button onClick={() => playNote("E4", amSynth)}>E4</button>
+                <button onClick={() => playNote("F4", amSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", amSynth)}>F3</button>
+                <button onClick={() => playNote("G3", amSynth)}>G3</button>
+                <button onClick={() => playNote("A3", amSynth)}>A3</button>
+                <button onClick={() => playNote("B3", amSynth)}>B3</button>
+                <br></br>
+                <p>Mono:</p>
+                <button onClick={() => playNote("D5", monoSynth)}>D5</button>
+                <button onClick={() => playNote("E5", monoSynth)}>E5</button>
+                <button onClick={() => playNote("F5", monoSynth)}>F5</button>
+                <button onClick={() => playNote("G5", monoSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", monoSynth)}>G4</button>
+                <button onClick={() => playNote("A4", monoSynth)}>A4</button>
+                <button onClick={() => playNote("B4", monoSynth)}>B4</button>
+                <button onClick={() => playNote("C5", monoSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", monoSynth)}>C4</button>
+                <button onClick={() => playNote("D4", monoSynth)}>D4</button>
+                <button onClick={() => playNote("E4", monoSynth)}>E4</button>
+                <button onClick={() => playNote("F4", monoSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", monoSynth)}>F3</button>
+                <button onClick={() => playNote("G3", monoSynth)}>G3</button>
+                <button onClick={() => playNote("A3", monoSynth)}>A3</button>
+                <button onClick={() => playNote("B3", monoSynth)}>B3</button>
+                <br></br>
+                <p>Duo:</p>
+                <button onClick={() => playNote("D5", duoSynth)}>D5</button>
+                <button onClick={() => playNote("E5", duoSynth)}>E5</button>
+                <button onClick={() => playNote("F5", duoSynth)}>F5</button>
+                <button onClick={() => playNote("G5", duoSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", duoSynth)}>G4</button>
+                <button onClick={() => playNote("A4", duoSynth)}>A4</button>
+                <button onClick={() => playNote("B4", duoSynth)}>B4</button>
+                <button onClick={() => playNote("C5", duoSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", duoSynth)}>C4</button>
+                <button onClick={() => playNote("D4", duoSynth)}>D4</button>
+                <button onClick={() => playNote("E4", duoSynth)}>E4</button>
+                <button onClick={() => playNote("F4", duoSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", duoSynth)}>F3</button>
+                <button onClick={() => playNote("G3", duoSynth)}>G3</button>
+                <button onClick={() => playNote("A3", duoSynth)}>A3</button>
+                <button onClick={() => playNote("B3", duoSynth)}>B3</button>
+                <br></br>
+                <p>Metal:</p>
+                <button onClick={() => playNote("D5", metalSynth)}>D5</button>
+                <button onClick={() => playNote("E5", metalSynth)}>E5</button>
+                <button onClick={() => playNote("F5", metalSynth)}>F5</button>
+                <button onClick={() => playNote("G5", metalSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", metalSynth)}>G4</button>
+                <button onClick={() => playNote("A4", metalSynth)}>A4</button>
+                <button onClick={() => playNote("B4", metalSynth)}>B4</button>
+                <button onClick={() => playNote("C5", metalSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", metalSynth)}>C4</button>
+                <button onClick={() => playNote("D4", metalSynth)}>D4</button>
+                <button onClick={() => playNote("E4", metalSynth)}>E4</button>
+                <button onClick={() => playNote("F4", metalSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", metalSynth)}>F3</button>
+                <button onClick={() => playNote("G3", metalSynth)}>G3</button>
+                <button onClick={() => playNote("A3", metalSynth)}>A3</button>
+                <button onClick={() => playNote("B3", metalSynth)}>B3</button>
+                <br></br>
+                <p>Pluck:</p>
+                <button onClick={() => playNote("D5", pluckSynth)}>D5</button>
+                <button onClick={() => playNote("E5", pluckSynth)}>E5</button>
+                <button onClick={() => playNote("F5", pluckSynth)}>F5</button>
+                <button onClick={() => playNote("G5", pluckSynth)}>G5</button>
+                <br></br>
+                <button onClick={() => playNote("G4", pluckSynth)}>G4</button>
+                <button onClick={() => playNote("A4", pluckSynth)}>A4</button>
+                <button onClick={() => playNote("B4", pluckSynth)}>B4</button>
+                <button onClick={() => playNote("C5", pluckSynth)}>C5</button>
+                <br></br>
+                <button onClick={() => playNote("C4", pluckSynth)}>C4</button>
+                <button onClick={() => playNote("D4", pluckSynth)}>D4</button>
+                <button onClick={() => playNote("E4", pluckSynth)}>E4</button>
+                <button onClick={() => playNote("F4", pluckSynth)}>F4</button>
+                <br></br>
+                <button onClick={() => playNote("F3", pluckSynth)}>F3</button>
+                <button onClick={() => playNote("G3", pluckSynth)}>G3</button>
+                <button onClick={() => playNote("A3", pluckSynth)}>A3</button>
+                <button onClick={() => playNote("B3", pluckSynth)}>B3</button>
+
             </div>
         );
     }
@@ -377,6 +591,7 @@ const Room = (props) => {
                     <Video key={index} peer={peer} />
                 );
             })}
+            <DrumBoard />
         </Container>
     );
 };
