@@ -7,13 +7,15 @@ import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
 import { useParams } from "react-router-dom";
+import getGridLayout, { getNumColumns, getNumRows } from "utils/getGridLayout";
 
 const gridAreas = "ABCDEFGHIJ".split("");
 
 const Grid = styled.div(({ num = 1 }) => [
     tw`grid h-full w-full`,
-    css`grid-template-rows: repeat(1, calc(100vh)); grid-template-columns: repeat(${num}, 1fr);`,
-    css`grid-template-areas: "${gridAreas.slice(0, num).join(' ')}"`
+    css`grid-template-rows: repeat(${getNumRows(num)}, calc(${100 / getNumRows(num)}vh));`,
+    css`grid-template-columns: repeat(${getNumColumns(num)}, 1fr);`,
+    css`grid-template-areas: ${getGridLayout(num)};`
 ]);
 
 const videoConstraints = {
@@ -58,6 +60,7 @@ function VideoGrid() {
 
             socketRef.current.on("user joined", payload => {
                 const peer = addPeer(payload.signal, payload.callerID, stream);
+                console.log(payload)
 
                 peersRef.current.push({
                     peerID: payload.callerID,
@@ -86,6 +89,8 @@ function VideoGrid() {
                 peersRef.current = peers;
                 setPeers(peers);
             })
+        }).catch(err => {
+            console.log(err)
         });
 
     }, []);
@@ -120,12 +125,14 @@ function VideoGrid() {
         return peer;
     }
 
+    console.log(peersRef.current.length);
+
     return (
-        <Grid num={peers.length + 1}>
+        <Grid num={peersRef.current.length + 1}>
             <LocalVideo ref={userVideo} />
-            {peers.map((peer, index) =>
+            {peersRef.current.map((peer, index) =>
                 <PeerVideo peer={peer.peer}
-                    key={peer.peerID}
+                    key={`${peer.peerID}${index}`}
                     grid={gridAreas[index + 1]}
                 />
             )}

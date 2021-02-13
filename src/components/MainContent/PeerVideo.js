@@ -17,9 +17,9 @@ function PeerVideo({ peer, grid }) {
     const ref = useRef();
 
     useEffect(() => {
+        console.log(peer);
         peer.on("stream", stream => {
             ref.current.srcObject = stream;
-            alert(stream);
         })
     }, [])
 
@@ -27,7 +27,7 @@ function PeerVideo({ peer, grid }) {
 
         <FrameWrapper letter={grid}>
             <VideoWrapper>
-                <video ref={ref} tw="w-full object-cover h-full" playsInline autoPlay />
+                <video ref={ref} tw="w-full object-cover h-full" playsInline autoPlay muted vol />
             </VideoWrapper>
         </FrameWrapper>
     );
