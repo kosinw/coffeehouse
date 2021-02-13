@@ -44,6 +44,8 @@ const Room = (props) => {
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
 
+    var isdeafened = false;
+
     function MuteButton() {
         const [text, setText] = useState("Mute");
 
@@ -88,22 +90,34 @@ const Room = (props) => {
         );
     }
 
+    function deafenMe(elem) {
+        elem.muted = true;
+    }
+
+    function undeafenMe(elem) {
+        elem.muted = false;
+    }
+
     function DeafenButton() {
         const [text, setText] = useState("Deafen");
 
-        const setMic = () => {
-            if (userVideo.current.srcObject.getAudioTracks()[0].enabled) {
+        const setAudio = () => {
+            if (!isdeafened) {
                 setText("Undeafen");
-                userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
+                isdeafened = true;
+                var elems = document.querySelectorAll("video, audio");
+                [].forEach.call(elems, function(elem) { deafenMe(elem); });
             } else {
                 setText("Deafen");
-                userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
+                isdeafened = false;
+                var elems = document.querySelectorAll("video, audio");
+                [].forEach.call(elems, function(elem) { undeafenMe(elem); });
             }
         };
 
         return (
             <div>
-                <button onClick={() => setMic()}>
+                <button onClick={() => setAudio()}>
                     {text}
                 </button>
             </div>
