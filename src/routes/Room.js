@@ -123,13 +123,18 @@ const Room = (props) => {
                     }
                 });
             }
+            else {
+                console.dir("no more songs queued");
+            }
         }
 
         const setVideo = () => {
-
             let videoquery = document.getElementById('video-query').value
 
-            if (!songplaying) {
+            if (videoquery == "-skip") {
+                songEnded()
+            }
+            else if (videoquery.substring(0, 6) == "-play ") {
                 songplaying = true;
                 var search = require('youtube-search');
 
@@ -138,7 +143,7 @@ const Room = (props) => {
                     key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
                 };
 
-                search(videoquery, opts, function (err, results) {
+                search(videoquery.substring(6), opts, function (err, results) {
                     if (err) return console.log(err);
                     let i;
                     for (i = 0; i < results.length; i++) {
@@ -150,9 +155,44 @@ const Room = (props) => {
                     }
                 });
             }
+            else if (videoquery.substring(0, 7) == "-queue ") {
+                console.dir(videoquery.substring(7));
+
+                if (!songplaying) {
+                    songplaying = true;
+                    var search = require('youtube-search');
+    
+                    var opts = {
+                        maxResults: 20,
+                        key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
+                    };
+    
+                    search(videoquery.substring(7), opts, function (err, results) {
+                        if (err) return console.log(err);
+                        let i;
+                        for (i = 0; i < results.length; i++) {
+                            if (results[i].kind == 'youtube#video') {
+                                setUri(results[i].link)
+                                console.dir(results[i].link);
+                                break;
+                            }
+                        }
+                    });
+                }
+                else {
+                    songqueue.push(videoquery);
+                    console.dir("this ran");
+                    console.dir(songqueue);
+                }
+            }
+            else if (videoquery == "-help") {
+                console.dir("List of Commands:");
+                console.dir("-play [song title]");
+                console.dir("-queue [song title]");
+                console.dir("-skip");
+            }
             else {
-                songqueue.push(videoquery);
-                console.dir(songqueue);
+                console.dir("this is literally just to be treated as normal text");
             }
         };
 
@@ -163,8 +203,8 @@ const Room = (props) => {
                 <ReactPlayer 
                     url={uri}
                     playing = 'true'
-                    height = '300px'
-                    width = '300px'
+                    height = '0px'
+                    width = '0px'
                     onEnded = {() => songEnded()}
                 />
             </div>
