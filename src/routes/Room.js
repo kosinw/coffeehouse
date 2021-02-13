@@ -15,6 +15,7 @@ const Container = styled.div`
 const StyledVideo = styled.video`
     height: 40%;
     width: 50%;
+    pointer-events: none;
 `;
 
 const Video = (props) => {
@@ -42,19 +43,23 @@ const Room = (props) => {
     const userVideo = useRef();
     const peersRef = useRef([]);
     const roomID = props.match.params.roomID;
-    const MuteButton = (props) => {
-        function setMic() {
-            if (userVideo.current.srcObject.getAudioTracks()[0].enabled)
-            {
-                this.changeText("newtext")
-                userVideo.current.srcObject.getAudioTracks()[0].enabled=false;
+    function MuteButton() {
+        const [text, setText] = useState("Mute");
+
+        const setMic = () => {
+            if (userVideo.current.srcObject.getAudioTracks()[0].enabled) {
+                setText("Unmute");
+                userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
+            } else {
+                setText("Mute");
+                userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
             }
-        }
+        };
 
         return (
             <div>
-                <button onClick={setMic}>
-                    {/* {text} */}
+                <button onClick={() => setMic()}>
+                    {text}
                 </button>
             </div>
         );
