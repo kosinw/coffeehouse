@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
-import ReactPlayer from 'react-player';
+import ReactPlayer from 'react-player/youtube';
+import ReactAudioPlayer from 'react-audio-player';
 
 const Container = styled.div`
     padding: 20px;
@@ -58,11 +59,31 @@ const Room = (props) => {
     const socketRef = useRef();
     const userVideo = useRef();
     const peersRef = useRef([]);
+    const audioRef = useRef();
     const roomID = props.match.params.roomID;
-
-    let deafened = false;
-    let songqueue = [];
+    const [uri, setUri] = useState(null);
+    const [playerRunning, setPlaying] = useState(true);
+    const [playerVol, setVol] = useState(1);
+    const songqueue = [];
     let songplaying = false;
+    let startPlayingSong = 0;
+    let deafened = false;
+
+    function songEnded() {
+        if (songqueue.length > 0) {
+            playSong(songqueue[0], 0);
+            setPlaying(true);
+        }
+        else {
+            setPlaying(false);
+            songplaying = false;
+        }
+    }
+
+    function playSong(url, time) {
+        startPlayingSong = time;
+        setUri(url);
+    }
 
     function MuteButton() {
         const [text, setText] = useState("Mute");
@@ -86,8 +107,24 @@ const Room = (props) => {
         );
     }
     function sendMessage(message) {
+        if (message == "-skip") {
+            songEnded();
+        }
+        else if (message.substring(0, 6) == "-play ") {
+            socketRef.current.emit("getLink", message.substring(6));
+        }
+        else if (message.substring(0, 7) == "-queue ") {
+            socketRef.current.emit("getLink", message.substring(7));
+        }
+        else if (message == "-help") {
+            console.dir("List of Commands:");
+            console.dir("-play [song title]");
+            console.dir("-queue [song title]");
+            console.dir("-skip");
+        }
+        //send message
         socketRef.current.emit("sending message", message);
-        setChat([...chat, Message({
+        setChat(chat => [...chat, Message({
             sender: "You",
             message: message,
             isYou: true
@@ -134,118 +171,24 @@ const Room = (props) => {
     }
 
     function SearchButton() {
-        const [uri, setUri] = useState(null);
-
-        const songEnded = () => {
-            songplaying = false;
-
-            console.dir(songqueue.length)
-
-            if (songqueue.length > 0) {
+        const startSong = () => {
+            setTimeout(function () {
                 songplaying = true;
-                var search = require('youtube-search');
-
-                var opts = {
-                    maxResults: 20,
-                    key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
-                };
-
-                search(songqueue[0], opts, function (err, results) {
-                    if (err) return console.log(err);
-                    let i;
-                    for (i = 0; i < results.length; i++) {
-                        if (results[i].kind == 'youtube#video') {
-                            setUri(results[i].link)
-                            console.dir(results[i].link);
-                            songqueue.shift()
-                            break;
-                        }
-                    }
-                });
-            }
-            else {
-                console.dir("no more songs queued");
-            }
+                setPlaying(true);
+                songqueue.shift();
+            }, Math.max(startPlayingSong - Date.now(), 0));
         }
-
-        const setVideo = () => {
-            let videoquery = document.getElementById('video-query').value
-
-            if (videoquery == "-skip") {
-                songEnded()
-            }
-            else if (videoquery.substring(0, 6) == "-play ") {
-                songplaying = true;
-                var search = require('youtube-search');
-
-                var opts = {
-                    maxResults: 20,
-                    key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
-                };
-
-                search(videoquery.substring(6), opts, function (err, results) {
-                    if (err) return console.log(err);
-                    let i;
-                    for (i = 0; i < results.length; i++) {
-                        if (results[i].kind == 'youtube#video') {
-                            setUri(results[i].link)
-                            console.dir(results[i].link);
-                            break;
-                        }
-                    }
-                });
-            }
-            else if (videoquery.substring(0, 7) == "-queue ") {
-                console.dir(videoquery.substring(7));
-
-                if (!songplaying) {
-                    songplaying = true;
-                    var search = require('youtube-search');
-    
-                    var opts = {
-                        maxResults: 20,
-                        key: 'AIzaSyCo4wVmAsuOeg4rxT6sgZgcsfDVic6nCes'
-                    };
-    
-                    search(videoquery.substring(7), opts, function (err, results) {
-                        if (err) return console.log(err);
-                        let i;
-                        for (i = 0; i < results.length; i++) {
-                            if (results[i].kind == 'youtube#video') {
-                                setUri(results[i].link)
-                                console.dir(results[i].link);
-                                break;
-                            }
-                        }
-                    });
-                }
-                else {
-                    songqueue.push(videoquery);
-                    console.dir("this ran");
-                    console.dir(songqueue);
-                }
-            }
-            else if (videoquery == "-help") {
-                console.dir("List of Commands:");
-                console.dir("-play [song title]");
-                console.dir("-queue [song title]");
-                console.dir("-skip");
-            }
-            else {
-                console.dir("this is literally just to be treated as normal text");
-            }
-        };
 
         return (
             <div>
-                <button onClick={() => setVideo()}>search youtube</button>
-                <input id='video-query' class="w3-input" type="text" placeholder="big chungus"></input>
-                <ReactPlayer 
+                <ReactPlayer
                     url={uri}
-                    playing = 'true'
-                    height = '0px'
-                    width = '0px'
-                    onEnded = {() => songEnded()}
+                    volume={playerVol}
+                    playing={playerRunning}
+                    height='0px'
+                    width='0px'
+                    onReady={() => startSong()}
+                    onEnded={() => songEnded()}
                 />
             </div>
         );
@@ -318,9 +261,15 @@ const Room = (props) => {
                 item.peer.signal(payload.signal);
             });
 
+            socketRef.current.on("link", payload => {
+                const data = JSON.parse(payload);
+                songqueue.push(data.url);
+                if (songqueue.length == 1) playSong(data.url, data.time);
+            });
+
             socketRef.current.on("receiving message", messageData => {
                 const data = JSON.parse(messageData);
-                setChat([...chat, Message({
+                setChat(chat => [...chat, Message({
                     sender: data.sender,
                     message: data.message,
                     isYou: false
@@ -361,7 +310,7 @@ const Room = (props) => {
 
     return (
         <Container>
-            <StyledVideo muted ref={userVideo} autoPlay playsInline />
+            <StyledVideo muted ref={userVideo} vol autoPlay playsInline />
             <MuteButton />
             <ChatType />
             <div>
