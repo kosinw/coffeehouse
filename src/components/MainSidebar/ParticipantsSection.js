@@ -44,14 +44,14 @@ function ParticipantProfile({ profile }) {
             <div tw="flex flex-row w-full p-5 justify-between">
                 <div tw="flex flex-row">
                     <span tw="relative inline-flex">
-                        <img tw="inline-flex h-12 w-12 rounded-full" src={getGravatarUri(profile.profileUrl)} alt="" />
+                        <img tw="inline-flex h-12 w-12 rounded-full" src={getGravatarUri(profile.profileUrl)} alt={`${profile.displayName} photo`} />
                         <span tw="flex absolute h-3 w-3 top-1 right-1 -mt-1 -mr-1">
                             <StatusIndicator status={profile.status} />
                         </span>
                     </span>
                     <div tw="flex flex-col ml-4 justify-between">
                         <span tw="inline-flex text-sm font-light capitalize">{profile.status}</span>
-                        <span tw="inline-flex text-base font-bold">{profile.displayName}</span>
+                        <span tw="inline-flex text-base font-bold">{`${profile.displayName}${profile.roommaster ? ` (Roommaster)` : ``}`}</span>
                     </div>
                 </div>
                 <div tw="flex py-2">
@@ -67,7 +67,7 @@ function ParticipantProfile({ profile }) {
 function ParticipantProfiles({ profiles }) {
     return (
         <div tw="flex flex-col">
-            {profiles.map((profile, index) => (<ParticipantProfile profile={profile} id={index} />))}
+            {profiles.map((profile, index) => (<ParticipantProfile profile={profile} key={index} />))}
         </div>
     );
 }

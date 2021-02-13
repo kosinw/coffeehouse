@@ -8,9 +8,9 @@ function App() {
   return (
     <BrowserRouter>
       <Switch>
-        {/* <Route path="/" exact component={CreateRoom} />
-        <Route path="/room/:roomID" component={Room} /> */}
-        <Route path="/" component={Index} />
+        {/* <Route path="/" exact component={CreateRoom} /> */}
+        <Route path="/room/:roomID" component={Room} />
+        <Route path="/:roomID" component={Index} />
       </Switch>
     </BrowserRouter>
   );

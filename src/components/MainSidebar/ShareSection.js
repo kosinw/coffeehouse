@@ -23,7 +23,7 @@ function ShareSection() {
         <div tw="flex" css="border-color: #313130; border-bottom-width: 0.2px;">
             <div tw="flex flex-row justify-between items-center w-full p-5">
                 <div tw="flex flex-col justify-center">
-                    <p tw="inline-flex text-xs">Ready to start jamming? Send this link to your friends so they can join this room!</p>
+                    <p tw="inline-flex text-xs">Ready to start jamming with the boys? Send this link to your friends!</p>
                     <a tw="inline-block text-xs font-bold text-blue-600 pt-2" href={window.location.href}>{window.location.href}</a>
                 </div>
                 <div tw="flex flex-col items-center ml-10 flex-shrink-0">
