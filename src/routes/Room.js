@@ -54,14 +54,13 @@ const Room = (props) => {
         return (
             <div>
                 <button onClick={setMic}>
-                    {text}
+                    {/* {text} */}
                 </button>
             </div>
         );
     }
 
     useEffect(() => {
-        onClick={ () => { this.changeText("newtext")}  }> {text} </Button>
         socketRef.current = io.connect("24.205.76.29:64198");
         navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: true }).then(stream => {
             userVideo.current.srcObject = stream;
