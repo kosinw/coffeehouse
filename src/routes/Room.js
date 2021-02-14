@@ -53,6 +53,63 @@ const Message = (props) => {
     //return <h1>{msgData.sender}: {msgData.text}</h1>
 }
 
+let soundList = [];
+let trackList = [];
+
+let trackplaying = true;
+
+let start = Date.now();
+let currentTime = 0;
+let progresslength = 0;
+
+// all the synths
+const defaultSynth = new Tone.Synth().toDestination();
+const fmSynth = new Tone.FMSynth().toDestination();
+const amSynth = new Tone.AMSynth().toDestination();
+const monoSynth = new Tone.MonoSynth().toDestination();
+const duoSynth = new Tone.DuoSynth().toDestination();
+const pluckSynth = new Tone.PluckSynth().toDestination();
+
+setInterval(function() {
+    if (document.getElementById("progress-bar") != null) {
+        var delta = Date.now() - start; // milliseconds elapsed since start
+        if (Math.floor(delta/1000) == 4) {
+            start += 4000;
+            soundList = [];
+            document.getElementById("progress-bar").textContent = "";
+            progresslength = 0;
+        }
+        currentTime = delta;
+        //console.dir(currentTime);
+        
+        let i;
+        let j;
+        for (i = 0; i < trackList.length; i++) {
+            for (j = 0; j < trackList[i].length; j++) {
+                if (Math.abs(trackList[i][j].time - currentTime) < 10) {
+                    console.dir("match");
+                    trackList[i][j].synth.triggerAttackRelease(trackList[i][j].note, "16n");
+                }
+            }
+        }
+
+        //console.dir("1: " + parseInt(currentTime/250));
+        //console.dir("2: " + progresslength);
+        if (parseInt(currentTime/250) > progresslength) {
+            progresslength++;
+            document.getElementById("progress-bar").textContent = document.getElementById("progress-bar").textContent + "=";
+        }
+    }
+}, 10); // update about every 100th of a second
+
+class SongBeat {
+    constructor(note, time, synth) {
+        this.note = note;
+        this.time = time;
+        this.synth = synth;
+    }
+}
+
 const Room = (props) => {
     const [peers, setPeers] = useState([]);
     const [chat, setChat] = useState([{}]);
@@ -135,11 +192,12 @@ const Room = (props) => {
     }
 
     function DrumBoard() {
-        //play a middle 'C' for the duration of an 8th note
+        const vol = new Tone.Volume(10).toDestination();
+
         const playDrum = (url) => {
             const player = new Tone.Player(url).toDestination();
             Tone.loaded().then(() => {
-	            player.start();
+	            player.connect(vol).start();
             });
         };
 
@@ -148,7 +206,6 @@ const Room = (props) => {
                 <br></br>
                 <br></br>
                 <p>Drums:</p>
-
                 <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/chinese-cymbal.mp3")}>13</button>
                 <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/bass-drum-1.mp3")}>14</button>
                 <button onClick={() => playDrum("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/acoustic-snare.mp3")}>15</button>
@@ -173,28 +230,66 @@ const Room = (props) => {
     }
 
     function SynthBoard() {
-        //create a synth and connect it to the main output (your speakers)
-        const defaultSynth = new Tone.Synth().toDestination();
-        const fmSynth = new Tone.FMSynth().toDestination();
-        const amSynth = new Tone.AMSynth().toDestination();
-        const monoSynth = new Tone.MonoSynth().toDestination();
-        const duoSynth = new Tone.DuoSynth().toDestination();
-        const metalSynth = new Tone.MetalSynth().toDestination();
-        const pluckSynth = new Tone.PluckSynth().toDestination();
-
-        //play a middle 'C' for the duration of an 8th note
+        const polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+        
         const playNote = (note, synth) => {
-            synth.triggerAttackRelease(note, "16n");
+            let currentNote = new SongBeat(note, currentTime, synth);
+            let shouldpush = true;
+            if (soundList.length > 0) {
+                //console.dir(soundList[soundList.length - 1].time);
+                
+                const now = Tone.now();
+                let addedTime = (parseInt(25 - (currentTime/10)%25)*10)
+                synth.triggerAttackRelease(note, "16n", now + parseFloat(addedTime)/1000);
+                //console.dir(currentTime + addedTime);
+                //console.dir(Math.round((currentTime + addedTime)/250)*250)
+                if ((Math.round((currentTime + addedTime)/250)*250) == soundList[soundList.length - 1].time) {
+                    shouldpush = false;
+                    console.dir("THE SAME");
+                }
+                console.dir("Current: " + (Math.round((currentTime + addedTime)/250)*250));
+                console.dir("Previous: " + soundList[soundList.length - 1].time);
+                currentNote.time = Math.round((currentTime + addedTime)/250)*250
+            }
+            else {
+                const now = Tone.now();
+                let addedTime = (parseInt(25 - (currentTime/10)%25)*10)
+                synth.triggerAttackRelease(note, "16n", now + parseFloat(addedTime)/1000);
 
-            const player = new Tone.Player("https://raw.githubusercontent.com/lukasswiss/hackhw21-sounds/main/drum-sounds/acoustic-snare.mp3").toDestination();
-            Tone.loaded().then(() => {
-	            player.start();
-            });
+                //console.dir(currentTime + addedTime);
+                //console.dir(Math.round((currentTime + addedTime)/250)*250);
+
+                currentNote.time = Math.round((currentTime + addedTime)/250)*250
+            }
+            if (shouldpush) {
+                soundList.push(currentNote);
+                //console.dir(soundList);
+                console.dir("different!");
+            }
+        };
+
+        const loopTrack = () => {
+            if (!trackList.includes(soundList)) {
+                trackList.push(soundList);
+                console.dir(trackList);
+            }
+        };
+
+        const playTrack = () => {
+            trackplaying = true;
+        };
+
+        const stopTrack = () => {
+            trackplaying = true;
         };
 
         return (
             <div>
                 <br></br>
+                <br></br>
+                <button onClick={() => loopTrack()}>Loop this</button>
+                <button onClick={() => playTrack()}>Play track</button>
+                <button onClick={() => stopTrack()}>Stop track</button>
                 <br></br>
                 <p>Default:</p>
                 <button onClick={() => playNote("D5", defaultSynth)}>D5</button>
@@ -300,27 +395,6 @@ const Room = (props) => {
                 <button onClick={() => playNote("G3", duoSynth)}>G3</button>
                 <button onClick={() => playNote("A3", duoSynth)}>A3</button>
                 <button onClick={() => playNote("B3", duoSynth)}>B3</button>
-                <br></br>
-                <p>Metal:</p>
-                <button onClick={() => playNote("D5", metalSynth)}>D5</button>
-                <button onClick={() => playNote("E5", metalSynth)}>E5</button>
-                <button onClick={() => playNote("F5", metalSynth)}>F5</button>
-                <button onClick={() => playNote("G5", metalSynth)}>G5</button>
-                <br></br>
-                <button onClick={() => playNote("G4", metalSynth)}>G4</button>
-                <button onClick={() => playNote("A4", metalSynth)}>A4</button>
-                <button onClick={() => playNote("B4", metalSynth)}>B4</button>
-                <button onClick={() => playNote("C5", metalSynth)}>C5</button>
-                <br></br>
-                <button onClick={() => playNote("C4", metalSynth)}>C4</button>
-                <button onClick={() => playNote("D4", metalSynth)}>D4</button>
-                <button onClick={() => playNote("E4", metalSynth)}>E4</button>
-                <button onClick={() => playNote("F4", metalSynth)}>F4</button>
-                <br></br>
-                <button onClick={() => playNote("F3", metalSynth)}>F3</button>
-                <button onClick={() => playNote("G3", metalSynth)}>G3</button>
-                <button onClick={() => playNote("A3", metalSynth)}>A3</button>
-                <button onClick={() => playNote("B3", metalSynth)}>B3</button>
                 <br></br>
                 <p>Pluck:</p>
                 <button onClick={() => playNote("D5", pluckSynth)}>D5</button>
@@ -592,6 +666,8 @@ const Room = (props) => {
                 );
             })}
             <DrumBoard />
+            <SynthBoard />
+            <span id="progress-bar"></span>
         </Container>
     );
 };
