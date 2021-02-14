@@ -17,6 +17,7 @@
     "react-dom": "^16.13.1",
     "react-helmet-async": "^1.0.7",
     "react-icons": "^4.2.0",
+    "react-player": "^2.8.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "react-use-clipboard": "^1.0.7",
@@ -26,7 +27,8 @@
     "tailwindcss": "^2.0.3",
     "twin.macro": "^2.2.3",
     "uuid": "^7.0.3",
-    "yarn": "^1.22.10"
+    "yarn": "^1.22.10",
+    "youtube-search": "^1.1.6"
   },
   "scripts": {
     "start": "react-scripts start",
