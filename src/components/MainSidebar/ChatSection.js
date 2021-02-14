@@ -8,12 +8,12 @@ import { useSocket } from "hooks/socket";
 import md5 from "md5";
 
 function Message({ sender, message }) {
-    return { text: sender + ": " + message };
+    return { text: sender + ": " + message, profileURL: "https://cdn.discordapp.com/attachments/809157007348465664/810345209720340520/roboticon.png" };
 }
 
 function NewMessage({ sender, message }) {
-    return { 
-        key: md5(sender) + md5(message) + md5(new Date().getMilliseconds()), 
+    return {
+        key: md5(sender) + md5(message) + md5(new Date().getMilliseconds()),
         text: message,
         profileURL: sender.photoURL,
         timeRecieved: new Date(),
@@ -114,11 +114,23 @@ function ChatSection() {
             socketRef.current.on("receiving message", messageData => {
                 const data = JSON.parse(messageData);
 
-                setChat(chat => [...chat, NewMessage({
-                    sender: JSON.parse(data.sender),
-                    message: data.message,
-                    isYou: false
-                })]);
+                console.log(data.sender);
+
+                let newSender = JSON.parse(data.sender);
+
+                if (!newSender) {
+                    setChat(chat => [...chat, Message({
+                        sender: data.sender,
+                        message: data.message,
+                        isYou: false
+                    })]);
+                } else {
+                    setChat(chat => [...chat, NewMessage({
+                        sender: newSender,
+                        message: data.message,
+                        isYou: false
+                    })]);
+                }
             });
 
             setInit(true);
