@@ -30,6 +30,7 @@ export const useAuth = () => {
 // Provider hook that creates auth object and handles state
 function useProvideAuth() {
     const [user, setUser] = useState(null);
+    const [reloadUser, setReloadUser] = useState(false);
 
     // Wrap any Firebase methods we want to use making sure ...
     // ... to save the user to state.
@@ -44,8 +45,6 @@ function useProvideAuth() {
     };
 
     const signinAnonymous = async () => {
-        await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
         const response = await firebase.auth().signInAnonymously();
 
         setUser(response.user)
@@ -113,6 +112,7 @@ function useProvideAuth() {
     // Return the user object and auth methods
     return {
         user,
+        setUser,
         signin,
         signup,
         signinAnonymous,
