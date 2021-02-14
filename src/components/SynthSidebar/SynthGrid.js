@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/react'
 import tw, { css, styled } from 'twin.macro';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParticipants } from "hooks/participants";
 import * as Tone from 'tone';
 import { useSocket } from "hooks/socket";
@@ -11,7 +11,7 @@ import { Progress } from "@chakra-ui/react";
 
 function SynthGridSection() {
     const socketRef = useSocket();
-    let tempProgress = 0;
+    const tempProgress = useRef();
 
     const defaultSynth = new Tone.Synth().toDestination();
     const fmSynth = new Tone.FMSynth().toDestination();
@@ -66,49 +66,47 @@ function SynthGridSection() {
         }
     }
 
-    useEffect(() => {
-        let interval;
-        setTimeout(function () {
-            interval = setInterval(function () {
-                let lastUpdate = 0;
-                var delta = Date.now() - start; // milliseconds elapsed since start
-                if (Math.floor(delta / 1000) >= 4) {
-                    start += 4000;
-                    soundList = [];
-                    progresslength = 0;
-                }
-                currentTime = delta;
-                //console.dir(currentTime);
-
-                let i;
-                let j;
-                for (i = 0; i < trackList.length; i++) {
-                    for (j = 0; j < trackList[i].length; j++) {
-                        if (Math.abs(trackList[i][j].time - currentTime) < 10) {
-                            console.dir("match");
-                            synthArr[trackList[i][j].synth].triggerAttackRelease(trackList[i][j].note, "32n");
-                        }
-                    }
-                }
-
-                tempProgress = currentTime;
-
-                // setProgress((delta / 4000) * 100);
-
-                //console.dir("1: " + parseInt(currentTime/250));
-                //console.dir("2: " + progresslength);
-                // if (parseInt(currentTime / 250) > progresslength) {
-                //     progresslength++;
-                // }
-
-            }, 10); // update about every 100th of a second
-        }, Date.now() % 4000);
-
-        return () => clearInterval(interval);
-    }, [])
-
 
     function SynthBoard() {
+        useEffect(() => {
+            let interval;
+            setTimeout(function () {
+                interval = setInterval(function () {
+                    let lastUpdate = 0;
+                    var delta = Date.now() - start; // milliseconds elapsed since start
+                    if (Math.floor(delta / 1000) >= 4) {
+                        start += 4000;
+                        soundList = [];
+                        progresslength = 0;
+                    }
+                    currentTime = delta;
+                    //console.dir(currentTime);
+    
+                    let i;
+                    let j;
+                    for (i = 0; i < trackList.length; i++) {
+                        for (j = 0; j < trackList[i].length; j++) {
+                            if (Math.abs(trackList[i][j].time - currentTime) < 10) {
+                                console.dir("match");
+                                synthArr[trackList[i][j].synth].triggerAttackRelease(trackList[i][j].note, "32n");
+                            }
+                        }
+                    }
+    
+                    tempProgress.current = currentTime;
+    
+                    // setProgress((delta / 4000) * 100);
+    
+                    //console.dir("1: " + parseInt(currentTime/250));
+                    //console.dir("2: " + progresslength);
+                    // if (parseInt(currentTime / 250) > progresslength) {
+                    //     progresslength++;
+                    // }
+    
+                }, 10); // update about every 100th of a second
+            }, Date.now() % 4000);
+        }, [])
+
         const playNote = (note, synth) => {
             let currentNote = new SongBeat(note, currentTime, synth);
             let shouldpush = true;
@@ -152,6 +150,7 @@ function SynthGridSection() {
         const loopTrack = () => {
             if (!trackList.includes(soundList)) {
                 trackList.push(soundList);
+                console.log(trackList);
                 socketRef.current.emit("noteLoop", JSON.stringify(soundList));
             }
         };
@@ -316,6 +315,8 @@ function SynthGridSection() {
             css`background-color: ${colors[((row * height + col) % 9)]}`
         ]);
 
+        const LoopButton = tw.button`w-full mt-2 h-8 bg-pink-900`
+
         function handleButtonClick(row, col) {
             const scale = Scale.get("c5 pentatonic").notes;
             const idx = height * row + col;
@@ -323,35 +324,37 @@ function SynthGridSection() {
             playNote(scale[idx % scale.length], fmSynth);
         }
 
+        function handleLoop(e) {
+            loopTrack();
+        }
+
         return (
-            <GridContainer>
-                {[...Array(height)].map((_, row) => {
-                    return [...Array(width)].map((_, col) =>
-                        <div key={`${row * height + col}`}>
-                            <ColoredButton
-                                onClick={() => handleButtonClick(row, col)}
-                                row={row}
-                                col={col}
-                                tw="inline-flex h-16 w-full focus:(outline-none opacity-70)"
-                            />
-                        </div>
-                    )
-                })}
-            </GridContainer>
+            <div tw="flex flex-col">
+                <GridContainer>
+                    {[...Array(height)].map((_, row) => {
+                        return [...Array(width)].map((_, col) =>
+                            <div key={`${row * height + col}`}>
+                                <ColoredButton
+                                    onClick={() => handleButtonClick(row, col)}
+                                    row={row}
+                                    col={col}
+                                    tw="inline-flex h-16 w-full focus:(outline-none opacity-70)"
+                                />
+                            </div>
+                        )
+                    })}
+                </GridContainer>
+                <LoopButton onClick={handleLoop} />
+            </div>
         );
     }
 
     function SynthProgress() {
         const [progressValue, setProgress] = useState(0);
 
-        useEffect(() => {
-            let interval = setInterval(() => {
-                console.log(tempProgress);
-                setProgress((tempProgress / 4000) * 100);
-            }, 250)
-
-            return () => clearInterval(interval);
-        }, [tempProgress])
+        // let interval = setInterval(() => {
+        //     setProgress((tempProgress.current / 4000) * 100);
+        // }, 250)
 
 
         return (<Progress colorScheme="pink" size="sm" tw="mb-2" value={progressValue} />);
