@@ -26,7 +26,7 @@ function PeerVideo({ peer, grid }) {
 
         <FrameWrapper letter={grid}>
             <VideoWrapper>
-                <video ref={ref} tw="w-full object-cover h-full" playsInline autoPlay muted />
+                <video onContextMenu={e => e.preventDefault()} ref={ref} tw="w-full object-cover h-full" playsInline autoPlay muted />
             </VideoWrapper>
         </FrameWrapper>
     );

@@ -4,7 +4,7 @@ import MainSidebar from "components/MainSidebar/MainSidebar";
 import MainContent from "components/MainContent/MainContent";
 import { ProvideParticipants } from "hooks/participants";
 
-const MainContainer = tw.div`h-screen w-screen flex flex-row`;
+const MainContainer = tw.div`h-screen w-screen flex flex-row bg-black`;
 
 function Room() {
     return (

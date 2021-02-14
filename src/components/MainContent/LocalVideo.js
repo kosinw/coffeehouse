@@ -16,7 +16,7 @@ const VideoWrapper = styled.div(({ }) => [
 const LocalVideo = React.forwardRef((_props, ref) => (
     <FrameWrapper>
         <VideoWrapper>
-            <video ref={ref} tw="w-full object-cover h-full" muted playsInline autoPlay />
+            <video onContextMenu={e => e.preventDefault()} ref={ref} tw="w-full object-cover h-full" muted playsInline autoPlay />
         </VideoWrapper>
     </FrameWrapper>
 ));

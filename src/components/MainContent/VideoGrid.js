@@ -30,11 +30,10 @@ const constraints = {
     audio: true
 }
 
-function VideoGrid() {
+function VideoGrid({ userVideo }) {
     const [peers, setPeers] = useState([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
-    const userVideo = useRef();
     const { roomID } = useParams();
     const { participants, updateParticipants } = useParticipants();
 
