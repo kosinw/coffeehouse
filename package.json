@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "homepage":".",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:80",
@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@tonaljs/tonal": "^4.6.0",
     "firebase": "^8.2.7",
     "framer-motion": "^3.3.0",
     "immer": "^8.0.1",

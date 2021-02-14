@@ -24,7 +24,7 @@ function ShareSection() {
             <div tw="flex flex-row justify-between items-center w-full p-5">
                 <div tw="flex flex-col justify-center">
                     <p tw="inline-flex text-xs">Ready to start jamming with the boys? Send this link to your friends!</p>
-                    <a tw="inline-block text-xs font-bold text-blue-600 pt-2" href={window.location.href}>{window.location.href}</a>
+                    {/* <a tw="inline-block text-xs font-bold text-blue-600 pt-2" href={window.location.href}>{window.location.href}</a> */}
                 </div>
                 <div tw="flex flex-col items-center ml-10 flex-shrink-0">
                     <button onClick={onClick} tw="bg-gray-500 py-2 pr-4 pl-3 rounded-full focus:outline-none hover:bg-gray-600 transition-colors cursor-pointer">
