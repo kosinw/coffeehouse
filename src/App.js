@@ -5,12 +5,13 @@ import Room from "./routes/Room";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/" exact component={CreateRoom} />
-        <Route path="/room/:roomID" component={Room} />
-      </Switch>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Switch>
+          {/* <Route path="/" exact component={CreateRoom} /> */}
+          <Route path="/room/:roomID" component={Room} />
+          <Route path="/" component={CreateRoom} />
+        </Switch>
+      </BrowserRouter>
   );
 }
 
