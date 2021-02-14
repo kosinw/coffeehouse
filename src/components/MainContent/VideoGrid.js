@@ -68,7 +68,7 @@ function VideoGrid({ userVideo }) {
     });
 
     useEffect(() => {
-        assignRef(socketRef, io.connect(process.env.REACT_APP_HOST_SERVER || "24.205.76.29:64198"));
+        assignRef(socketRef, io.connect(process.env.REACT_APP_HOST_SERVER || "24.205.76.29:8000"));
         setSocketInitialized(true);
 
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
@@ -127,6 +127,7 @@ function VideoGrid({ userVideo }) {
                 songqueue.current.splice(0, 0, data.url);
                 playSong(data.url, data.time);
             });
+            
             socketRef.current.on("linkEnd", payload => {
                 const data = JSON.parse(payload);
                 queueSong(data.url);
@@ -137,14 +138,14 @@ function VideoGrid({ userVideo }) {
                 songEnded(time);
             });
 
-            socketRef.current.on("receiving message", messageData => {
-                const data = JSON.parse(messageData);
-                setChat(chat => [...chat, Message({
-                    sender: data.sender,
-                    message: data.message,
-                    isYou: false
-                })]);
-            });
+            // socketRef.current.on("receiving message", messageData => {
+            //     const data = JSON.parse(messageData);
+            //     setChat(chat => [...chat, Message({
+            //         sender: data.sender,
+            //         message: data.message,
+            //         isYou: false
+            //     })]);
+            // });
 
         }).catch(err => {
             console.log(err)
