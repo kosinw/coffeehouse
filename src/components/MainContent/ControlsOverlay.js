@@ -64,7 +64,7 @@ function ControlsOverlay({ userVideo }) {
 
     useEffect(() => {
         const elems = document.querySelectorAll("video, audio");
-        [].forEach.call(elems, function (elem) { elem.muted = deafened; });
+        [].forEach.call(elems, function (elem) { if (elem.id !== "selfAudio") { elem.muted = deafened; } });
     }, [deafened]);
 
     return (
