@@ -80,8 +80,8 @@ function ControlsOverlay({ userVideo }) {
                 }
             </ControlButton>
             <ControlButton onClick={toggleDeafened}>
-            {
-                    deafened ? <BiHeadphone tw="w-8 h-8" /> : <FaDeaf tw="w-8 h-8" />
+                {
+                    !deafened ? <BiHeadphone tw="w-8 h-8" /> : <FaDeaf tw="w-8 h-8" />
                 }
             </ControlButton>
         </ControlsContainer>
@@ -89,83 +89,3 @@ function ControlsOverlay({ userVideo }) {
 }
 
 export default ControlsOverlay;
-
-
-// export function MuteButton() {
-//     const [text, setText] = useState("Mute");
-
-//     const setMic = () => {
-//         if (userVideo.current.srcObject.getAudioTracks()[0].enabled) {
-//             setText("Unmute");
-//             userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
-//         } else {
-//             setText("Mute");
-//             userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <button onClick={() => setMic()}>
-//                 {text}
-//             </button>
-//         </div>
-//     );
-// }
-
-// function VideoButton() {
-//     const [text, setText] = useState("Turn off Video");
-
-//     const setVideo = () => {
-//         if (userVideo.current.srcObject.getVideoTracks()[0].enabled) {
-//             setText("Turn on Video");
-//             userVideo.current.srcObject.getVideoTracks()[0].enabled = false;
-//         } else {
-//             setText("Turn off Video");
-//             userVideo.current.srcObject.getVideoTracks()[0].enabled = true;
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <button onClick={() => setVideo()}>
-//                 {text}
-//             </button>
-//         </div>
-//     );
-// }
-
-
-// function deafenMe(elem) {
-//     elem.muted = true;
-// }
-
-// function undeafenMe(elem) {
-//     elem.muted = false;
-// }
-
-// function DeafenButton() {
-//     const [text, setText] = useState("Deafen");
-
-//     const setAudio = () => {
-//         if (!deafened) {
-//             setText("Undeafen");
-//             deafened = true;
-//             var elems = document.querySelectorAll("video, audio");
-//             [].forEach.call(elems, function (elem) { deafenMe(elem); });
-//         } else {
-//             setText("Deafen");
-//             deafened = false;
-//             var elems = document.querySelectorAll("video, audio");
-//             [].forEach.call(elems, function (elem) { undeafenMe(elem); });
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <button onClick={() => setAudio()}>
-//                 {text}
-//             </button>
-//         </div>
-//     );
-// }
