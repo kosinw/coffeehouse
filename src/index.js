@@ -5,6 +5,7 @@ import GlobalStyles from "./GlobalStyles";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ProvideAuth } from "hooks/firebase";
 
+
 ReactDOM.render(
   <React.StrictMode>
     <HelmetProvider>
