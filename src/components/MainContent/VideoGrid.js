@@ -9,7 +9,7 @@ import io from "socket.io-client";
 import { useParams } from "react-router-dom";
 import getGridLayout, { getNumColumns, getNumRows } from "utils/getGridLayout";
 import { useParticipants } from "hooks/participants";
-import { useVideoBot } from "../hooks/video-bot";
+import { useVideoBot } from "hooks/video-bot";
 
 const gridAreas = "ABCDEFGHIJ".split("");
 
@@ -31,25 +31,8 @@ const constraints = {
     audio: true
 }
 
-// TODO(kosi): This is temporary chat ui for functionality
-function ChatType() {
-    let formData = { message: "" };
-    const handleChange = (e) => {
-        formData.message = e.target.value.trim();
-    };
-    const afterSubmission = e => {
-        e.preventDefault();
-        sendMessage(formData.message);
-    }
-
-    return (
-        <form id="chatEnter" onSubmit={afterSubmission}>
-            <input type="text" onChange={handleChange} placeholder="Enter message"></input>
-        </form>
-    );
-}
-
 function VideoGrid({ userVideo }) {
+    const [chat, setChat] = useState([{}]);
     const [peers, setPeers] = useState([]);
     const socketRef = useRef();
     const peersRef = useRef([]);
@@ -179,6 +162,25 @@ function VideoGrid({ userVideo }) {
         }
     }
 
+    // TODO(kosi): This is temporary chat ui for functionality
+    function ChatType() {
+        let formData = { message: "" };
+        const handleChange = (e) => {
+            formData.message = e.target.value.trim();
+        };
+        const afterSubmission = e => {
+            e.preventDefault();
+            sendMessage(formData.message);
+        }
+
+        return (
+            <form id="chatEnter" onSubmit={afterSubmission}>
+                <input type="text" onChange={handleChange} placeholder="Enter message"></input>
+            </form>
+        );
+    }
+
+
     function createPeer(userToSignal, callerID, stream) {
         const peer = new Peer({
             initiator: true,
@@ -209,13 +211,21 @@ function VideoGrid({ userVideo }) {
         return peer;
     }
 
+
     useEffect(() => {
         updateParticipants(peersRef.current);
     }, [peers]);
 
     return (
         <>
-            <ChatType />
+            <>
+                <ChatType />
+                <div tw="text-white">
+                    {chat.map((person, index) => (
+                        <p key={index}>{person.text}</p>
+                    ))}
+                </div>
+            </>
             <Grid num={peersRef.current.length + 1}>
                 <LocalVideo ref={userVideo} />
                 {peersRef.current.map((peer, index) =>
