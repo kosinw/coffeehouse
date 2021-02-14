@@ -241,8 +241,10 @@ const Room = (props) => {
                 const now = Tone.now();
                 let addedTime = (parseInt(25 - (currentTime/10)%25)*10)
                 synth.triggerAttackRelease(note, "16n", now + parseFloat(addedTime)/1000);
+
                 //console.dir(currentTime + addedTime);
                 //console.dir(Math.round((currentTime + addedTime)/250)*250)
+
                 if ((Math.round((currentTime + addedTime)/250)*250) == soundList[soundList.length - 1].time) {
                     shouldpush = false;
                     console.dir("THE SAME");
@@ -280,7 +282,7 @@ const Room = (props) => {
         };
 
         const stopTrack = () => {
-            trackplaying = true;
+            trackplaying = false;
         };
 
         return (
