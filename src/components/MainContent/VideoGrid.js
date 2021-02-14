@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import getGridLayout, { getNumColumns, getNumRows } from "utils/getGridLayout";
 import { useParticipants } from "hooks/participants";
 import { useVideoBot } from "hooks/video-bot";
+import { useAuth } from "hooks/firebase";
 
 const gridAreas = "ABCDEFGHIJ".split("");
 
@@ -35,13 +36,38 @@ function VideoGrid({ userVideo }) {
     const [chat, setChat] = useState([{}]);
     const [peers, setPeers] = useState([]);
     const socketRef = useRef();
+    const [socketInitialized, setSocketInitialized] = useState(false);
     const peersRef = useRef([]);
     const { roomID } = useParams();
     const { participants, updateParticipants } = useParticipants();
     const { playSong, songEnded, queueSong, songqueue } = useVideoBot();
+    const { user, reloadUser } = useAuth();
+
+    const [authLoading, setAuthLoading] = useState(true);
+
+    useEffect(() => {
+        if (!!user && !!user.displayName && socketInitialized && authLoading) {            
+            const payload = JSON.stringify({
+                userID: user.uid,
+                roomID,
+                photoURL: user.photoURL,
+                displayName: user.displayName
+            });
+
+            socketRef.current.emit("auth/user/join", payload);
+
+            socketRef.current.on("auth/user/currentUsers", users => {
+                console.log(users);
+                updateParticipants(users.map(JSON.parse));
+            })
+
+            setAuthLoading(false);
+        }
+    });
 
     useEffect(() => {
         socketRef.current = io.connect(process.env.REACT_APP_HOST_SERVER || "24.205.76.29:64198");
+        setSocketInitialized(true);
 
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
             userVideo.current.srcObject = stream;
@@ -212,9 +238,9 @@ function VideoGrid({ userVideo }) {
     }
 
 
-    useEffect(() => {
-        updateParticipants(peersRef.current);
-    }, [peers]);
+    // useEffect(() => {
+    //     updateParticipants(peersRef.current);
+    // }, [peers]);
 
     return (
         <>

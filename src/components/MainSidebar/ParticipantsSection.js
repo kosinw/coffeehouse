@@ -11,7 +11,7 @@ const StatusIndicator = styled.span(({ status }) => [
 ]);
 
 // TODO(kosi): Add functionality, onClick, kicks participant
-function ParticipantProfile({ profile }) {
+function ParticipantProfile({ profile, you }) {
     return (
         <div tw="flex">
             <div tw="flex flex-row w-full p-5 justify-between">
@@ -24,32 +24,33 @@ function ParticipantProfile({ profile }) {
                     </span>
                     <div tw="flex flex-col ml-4 justify-between">
                         <span tw="inline-flex text-sm font-light capitalize">{profile.status}</span>
-                        <span tw="inline-flex text-base font-bold">{`${profile.displayName}${profile.roommaster ? ` (Roommaster)` : ``}`}</span>
+                        <span css="max-width: 200px;" tw="inline-block text-base font-bold truncate">{`${profile.displayName}${you ? ` (You)` : ``}`}</span>
                     </div>
                 </div>
                 <div tw="flex py-2">
-                    <button tw="flex items-center rounded-full font-bold text-lg border-white border-2 px-5 transition-colors duration-150 ease-in-out focus:outline-none hover:(bg-white text-black)">
-                        <span tw="inline-block font-bold tracking-tight text-sm uppercase">Kick</span>
-                    </button>
+                    {
+                        !you &&
+                        <button tw="flex items-center rounded-full font-bold text-lg border-white border-2 px-5 transition-colors duration-150 ease-in-out focus:outline-none hover:(bg-white text-black)">
+                            <span tw="inline-block font-bold tracking-tight text-sm uppercase">Kick</span>
+                        </button>
+                    }
                 </div>
             </div>
         </div>
     )
 }
 
-function SelfParticipantProfile(props) {
-    return <ParticipantProfile {...props} />;
+function SelfParticipantProfile({ profile }) {
+    return <ParticipantProfile you profile={profile} />;
 }
 
 function ParticipantProfiles({ profiles }) {
     const { self } = useParticipants();
 
-    console.log(self);
-
     return (
         <div tw="flex flex-col">
             {!!self && <SelfParticipantProfile profile={self} />}
-            {profiles.map((profile) => (<ParticipantProfile profile={profile} key={profile.id} />))}
+            {profiles.map((profile) => (<ParticipantProfile profile={profile} you={profile.id === self.id} key={profile.id} />))}
         </div>
     );
 }

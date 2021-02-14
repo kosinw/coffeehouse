@@ -27,6 +27,7 @@
     "styled-components": "^5.1.0",
     "tailwindcss": "^2.0.3",
     "twin.macro": "^2.2.3",
+    "unique-names-generator": "^4.3.1",
     "uuid": "^7.0.3",
     "yarn": "^1.22.10",
     "youtube-search": "^1.1.6",
