@@ -11,6 +11,8 @@ import getGridLayout, { getNumColumns, getNumRows } from "utils/getGridLayout";
 import { useParticipants } from "hooks/participants";
 import { useVideoBot } from "hooks/video-bot";
 import { useAuth } from "hooks/firebase";
+import { useSocket } from "hooks/socket";
+import { assignRef } from "use-callback-ref";
 
 const gridAreas = "ABCDEFGHIJ".split("");
 
@@ -35,18 +37,18 @@ const constraints = {
 function VideoGrid({ userVideo }) {
     const [chat, setChat] = useState([{}]);
     const [peers, setPeers] = useState([]);
-    const socketRef = useRef();
+    const socketRef = useSocket();
     const [socketInitialized, setSocketInitialized] = useState(false);
     const peersRef = useRef([]);
     const { roomID } = useParams();
     const { participants, updateParticipants } = useParticipants();
     const { playSong, songEnded, queueSong, songqueue } = useVideoBot();
-    const { user, reloadUser } = useAuth();
+    const { user } = useAuth();
 
     const [authLoading, setAuthLoading] = useState(true);
 
     useEffect(() => {
-        if (!!user && !!user.displayName && socketInitialized && authLoading) {            
+        if (!!user && !!user.displayName && socketInitialized && authLoading) {
             const payload = JSON.stringify({
                 userID: user.uid,
                 roomID,
@@ -66,7 +68,7 @@ function VideoGrid({ userVideo }) {
     });
 
     useEffect(() => {
-        socketRef.current = io.connect(process.env.REACT_APP_HOST_SERVER || "24.205.76.29:64198");
+        assignRef(socketRef, io.connect(process.env.REACT_APP_HOST_SERVER || "24.205.76.29:64198"));
         setSocketInitialized(true);
 
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
@@ -244,14 +246,12 @@ function VideoGrid({ userVideo }) {
 
     return (
         <>
-            <>
-                <ChatType />
+            {/* <ChatType />
                 <div tw="text-white">
                     {chat.map((person, index) => (
                         <p key={index}>{person.text}</p>
                     ))}
-                </div>
-            </>
+                </div> */}
             <Grid num={peersRef.current.length + 1}>
                 <LocalVideo ref={userVideo} />
                 {peersRef.current.map((peer, index) =>

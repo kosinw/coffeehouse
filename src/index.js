@@ -4,6 +4,14 @@ import App from './App';
 import GlobalStyles from "./GlobalStyles";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ProvideAuth } from "hooks/firebase";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react"
+
+const theme = extendTheme({
+  fonts: {
+    body: "Inter",
+    heading: "Inter"
+  }
+})
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,9 +23,11 @@ ReactDOM.render(
       </Helmet>
 
       <GlobalStyles />
-      <ProvideAuth>
-        <App />
-      </ProvideAuth>
+      <ChakraProvider>
+        <ProvideAuth>
+          <App />
+        </ProvideAuth>
+      </ChakraProvider>
     </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root')

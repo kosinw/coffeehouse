@@ -28,12 +28,12 @@ function ParticipantProfile({ profile, you }) {
                     </div>
                 </div>
                 <div tw="flex py-2">
-                    {
+                    {/* {
                         !you &&
                         <button tw="flex items-center rounded-full font-bold text-lg border-white border-2 px-5 transition-colors duration-150 ease-in-out focus:outline-none hover:(bg-white text-black)">
                             <span tw="inline-block font-bold tracking-tight text-sm uppercase">Kick</span>
                         </button>
-                    }
+                    } */}
                 </div>
             </div>
         </div>

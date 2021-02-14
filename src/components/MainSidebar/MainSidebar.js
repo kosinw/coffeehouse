@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import SidebarHeader from "./SidebarHeader";
 import ShareSection from "./ShareSection";
 import ParticipantsSection from "./ParticipantsSection";
+import ChatSection from "./ChatSection";
 import { BiCoffee } from "react-icons/bi";
 
 const MainSidebarContainer = styled.div(({ visible }) => [
@@ -41,9 +42,10 @@ function MainSidebar() {
     return (
         <MainSidebarContainer visible={visible}>
             <SidebarHeader hide={() => setVisible(false)} />
-            <SidebarList>
+            <SidebarList tw="h-full">
                 <ShareSection />
                 <ParticipantsSection />
+                <ChatSection />
             </SidebarList>
             <SidebarShowButton visible={visible} show={() => setVisible(true)} />
         </MainSidebarContainer>
