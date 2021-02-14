@@ -4,16 +4,17 @@ import tw from 'twin.macro';
 import React from "react";
 import Logo from "assets/images/logo.png";
 import { HiChevronLeft } from "react-icons/hi";
+import { BiCoffee } from "react-icons/bi";
 
 const LogoContainer = tw.div`flex flex-row items-center`;
 const IconContainer = tw.div`flex flex-row items-center`;
 
 function SidebarHeader() {
     return (
-        <div css="width: 27.75em; border-color: #313130; border-bottom-width: 0.2px;" tw="fixed flex top-0 left-0">
+        <div css="width: 26.75em; border-color: #313130; border-bottom-width: 0.2px;" tw="fixed flex top-0 left-0">
             <div tw="flex flex-row justify-between items-center w-full p-5">
                 <LogoContainer>
-                    <img tw="w-8" src={Logo} alt="Coffehouse logo" />
+                    <BiCoffee tw="w-8 h-8" />
                     <span tw="pl-4 font-black text-3xl">Coffeehouse</span>
                 </LogoContainer>
                 <IconContainer>

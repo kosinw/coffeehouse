@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import GlobalStyles from "./GlobalStyles";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { ProvideAuth } from "hooks/firebase";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -14,7 +15,9 @@ ReactDOM.render(
       </Helmet>
 
       <GlobalStyles />
-      <App />
+      <ProvideAuth>
+        <App />
+      </ProvideAuth>
     </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root')

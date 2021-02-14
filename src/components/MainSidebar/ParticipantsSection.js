@@ -2,40 +2,13 @@
 import { jsx } from '@emotion/react'
 import tw, { css, styled } from 'twin.macro';
 import React, { useState } from "react";
-import { getGravatarUri } from "utils/gravatar";
+import { useParticipants } from "hooks/participants";
 
 const StatusIndicator = styled.span(({ status }) => [
     tw`relative inline-flex rounded-full h-3 w-3 `,
     status === "online" && tw`bg-green-500`,
     status === "offline" && tw`bg-red-500`
 ]);
-
-const profiles = [
-    {
-        status: "online",
-        displayName: "Electro",
-        friends: false,
-        profileUrl: "https://cdn.discordapp.com/attachments/809157007348465664/810012718950121472/electro.png"
-    },
-    {
-        status: "online",
-        displayName: "Vulture",
-        friends: false,
-        profileUrl: "https://cdn.discordapp.com/attachments/809157007348465664/810012714112909312/vulture.png"
-    },
-    {
-        status: "online",
-        displayName: "Rhino",
-        friends: false,
-        profileUrl: "https://cdn.discordapp.com/attachments/809157007348465664/810012720657072158/rhino.png"
-    },
-    // {
-    //     status: "offline",
-    //     displayName: "Goblin",
-    //     friends: false,
-    //     profileUrl: "https://cdn.discordapp.com/attachments/809157007348465664/810012716513099821/goblin.png"
-    // },
-];
 
 // TODO(kosi): Add functionality, onClick, kicks participant
 function ParticipantProfile({ profile }) {
@@ -44,7 +17,7 @@ function ParticipantProfile({ profile }) {
             <div tw="flex flex-row w-full p-5 justify-between">
                 <div tw="flex flex-row">
                     <span tw="relative inline-flex">
-                        <img tw="inline-flex h-12 w-12 rounded-full" src={getGravatarUri(profile.profileUrl)} alt={`${profile.displayName} photo`} />
+                        <img tw="inline-flex h-12 w-12 rounded-full" src={profile.profileUrl} alt={`${profile.displayName} photo`} />
                         <span tw="flex absolute h-3 w-3 top-1 right-1 -mt-1 -mr-1">
                             <StatusIndicator status={profile.status} />
                         </span>
@@ -64,15 +37,26 @@ function ParticipantProfile({ profile }) {
     )
 }
 
+function SelfParticipantProfile(props) {
+    return <ParticipantProfile {...props} />;
+}
+
 function ParticipantProfiles({ profiles }) {
+    const { self } = useParticipants();
+
+    console.log(self);
+
     return (
         <div tw="flex flex-col">
-            {profiles.map((profile, index) => (<ParticipantProfile profile={profile} key={index} />))}
+            {!!self && <SelfParticipantProfile profile={self} />}
+            {profiles.map((profile) => (<ParticipantProfile profile={profile} key={profile.id} />))}
         </div>
     );
 }
 
 function ParticipantsSection() {
+    const { otherParticipants: profiles } = useParticipants();
+
     return (
         <div tw="flex" css="border-color: #313130; border-bottom-width: 0.2px;">
             <div tw="flex flex-col w-full">

@@ -8,6 +8,7 @@ import Peer from "simple-peer";
 import io from "socket.io-client";
 import { useParams } from "react-router-dom";
 import getGridLayout, { getNumColumns, getNumRows } from "utils/getGridLayout";
+import { useParticipants } from "hooks/participants";
 
 const gridAreas = "ABCDEFGHIJ".split("");
 
@@ -19,8 +20,9 @@ const Grid = styled.div(({ num = 1 }) => [
 ]);
 
 const videoConstraints = {
-    height: window.innerHeight / 2,
-    width: window.innerWidth / 2
+    height: 720,
+    width: 1280,
+    frameRate: 30
 };
 
 const constraints = {
@@ -34,6 +36,7 @@ function VideoGrid() {
     const peersRef = useRef([]);
     const userVideo = useRef();
     const { roomID } = useParams();
+    const { participants, updateParticipants } = useParticipants();
 
     useEffect(() => {
         socketRef.current = io.connect(process.env.REACT_APP_HOST_SERVER || "24.205.76.29:64198");
@@ -60,7 +63,6 @@ function VideoGrid() {
 
             socketRef.current.on("user joined", payload => {
                 const peer = addPeer(payload.signal, payload.callerID, stream);
-                console.log(payload)
 
                 peersRef.current.push({
                     peerID: payload.callerID,
@@ -125,7 +127,9 @@ function VideoGrid() {
         return peer;
     }
 
-    console.log(peersRef.current.length);
+    useEffect(() => {
+        updateParticipants(peersRef.current);
+    }, [peers]);
 
     return (
         <Grid num={peersRef.current.length + 1}>

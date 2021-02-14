@@ -6,7 +6,7 @@ import ParticipantsSection from "./ParticipantsSection";
 
 const MainSidebarContainer = styled.div(() => [
     tw`bg-black text-white min-h-screen flex pt-20 flex-col overflow-hidden`,
-    css`width: 27.75rem;`
+    css`width: 26.75rem; border-color: #313130; border-right-width: 0.2px;`
 ]);
 
 const SidebarList = styled.div(() => [
