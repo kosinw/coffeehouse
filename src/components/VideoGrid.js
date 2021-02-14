@@ -1,57 +1,16 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/react'
+import tw, { styled, css } from 'twin.macro';
+import PeerVideo from "components/MainContent/PeerVideo";
+import LocalVideo from "components/MainContent/LocalVideo";
 import React, { useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
 import Peer from "simple-peer";
-import styled from "styled-components";
-import { useVideoBot } from "../hooks/video-bot";
+import io from "socket.io-client";
 import { useParams } from "react-router-dom";
+import getGridLayout, { getNumColumns, getNumRows } from "utils/getGridLayout";
+import { useParticipants } from "hooks/participants";
 
-
-const Container = styled.div`
-    padding: 20px;
-    display: flex;
-    height: 100vh;
-    width: 90%;
-    margin: auto;
-    flex-wrap: wrap;
-`;
-
-const StyledVideo = styled.video`
-    height: 40%;
-    width: 50%;
-    pointer-events: none;
-`;
-
-function Item(props) {
-    return <li>{props.message}</li>;
-}
-
-const Video = (props) => {
-    const ref = useRef();
-
-    useEffect(() => {
-        props.peer.on("stream", stream => {
-            ref.current.srcObject = stream;
-        })
-    }, []);
-
-    return (
-        <StyledVideo muted={false} playsInline autoPlay ref={ref} />
-    );
-}
-
-const videoConstraints = {
-    height: window.innerHeight / 2,
-    width: window.innerWidth / 2
-};
-
-const Message = (props) => {
-    //sender: person who sent it
-    //text: message body
-    //isYou: whether you sent it
-    const msgData = props;
-    return { text: msgData.sender + ": " + msgData.message };
-    //return <h1>{msgData.sender}: {msgData.text}</h1>
-}
+const gridAreas = "ABCDEFGHIJ".split("");
 
 const Room = (props) => {
     const [peers, setPeers] = useState([]);
@@ -303,5 +262,3 @@ const Room = (props) => {
         </Container>
     );
 };
-
-export default Room;
