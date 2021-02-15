@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "homepage": ".",
+  "homepage": "https://cfe.house/",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:80",
