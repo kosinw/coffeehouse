@@ -95,7 +95,7 @@ function VideoGrid({ userVideo }) {
     });
 
     useEffect(() => {
-        assignRef(socketRef, io.connect(process.env.REACT_APP_HOST_SERVER || "52.25.140.5:8000"));
+        assignRef(socketRef, io.connect("https://hackhw21-backend.vercel.app/"));
         setSocketInitialized(true);
 
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
