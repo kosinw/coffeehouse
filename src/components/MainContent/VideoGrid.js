@@ -95,7 +95,11 @@ function VideoGrid({ userVideo }) {
     });
 
     useEffect(() => {
+<<<<<<< HEAD
         assignRef(socketRef, io.connect(process.env.REACT_APP_HOST_SERVER || "https://infinite-ravine-45588.herokuapp.com/"));
+=======
+        assignRef(socketRef, io.connect("https://hackhw21-backend.vercel.app/"));
+>>>>>>> 12859132e4ff35446d63717972f9d1ab4bd4ded3
         setSocketInitialized(true);
 
         navigator.mediaDevices.getUserMedia(constraints).then(stream => {
